@@ -9,16 +9,16 @@ import org.springframework.http.HttpStatus;
 public enum EnumError {
 
     //----------- PAYMENT ------------
-    ORDER_DATA_EXISTED("ORDER-DTE", "Data exit", HttpStatus.CONFLICT),
+    PAYMENT_DATA_EXISTED("PAYMENT-DTE", "Data exit", HttpStatus.CONFLICT),
 
-    ORDER_GET_ERROR("ORDER-GET-ERROR", "Have error in process get order", HttpStatus.BAD_REQUEST),
-    INTERNAL_ERROR("ACC-S-999", "Unexpected internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
-    ORDER_ERR_NOT_FOUND("ORDER-CATE_NF", "Not found sub order with id", HttpStatus.BAD_REQUEST),
-    ORDER_ERR_DEL_EM("ORDER-CATE-GA", "List ids to delete is empty", HttpStatus.BAD_REQUEST),
+    PAYMENT_GET_ERROR("PAYMENT-GET-ERROR", "Have error in process get payment", HttpStatus.BAD_REQUEST),
+    PAYMENT_ERR_NOT_FOUND("PAYMENT-CATE_NF", "Not found sub payment with id", HttpStatus.BAD_REQUEST),
+    PAYMENT_ERR_DEL_EM("PAYMENT-CATE-GA", "List ids to delete is empty", HttpStatus.BAD_REQUEST),
     //----------- EXTERNAL SERVICES ------------
-    PRODUCT_NOT_FOUND("PRODUCT-404", "Product not found", HttpStatus.NOT_FOUND),
-    PRODUCT_SERVICE_UNAVAILABLE("PRODUCT-503", "Product service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+    PAYMENT_NOT_FOUND("PAYMENT-404", "payment not found", HttpStatus.NOT_FOUND),
+    PAYMENT_SERVICE_UNAVAILABLE("PAYMENT-503", "payment service unavailable", HttpStatus.SERVICE_UNAVAILABLE),
 
+    INTERNAL_ERROR("PAYMENT-S-999", "Unexpected internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
     private final String code;
     private final String defaultMessage;
     private final HttpStatus httpStatus;
