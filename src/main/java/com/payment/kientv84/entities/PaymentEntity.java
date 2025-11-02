@@ -33,13 +33,20 @@ public class PaymentEntity{
     @Column(name = "order_id", nullable = false)
     private UUID orderId;
 
+    @Column(nullable = false)
+    private UUID userId;
+
+    @Column(nullable = false)
+    private String orderCode;
+
     // Tổng tiền thanh toán (copy từ order để tiện tracking)
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
     // Phương thức thanh toán: COD, MOMO, VNPAY, PAYPAL...
-    @Column(name = "payment_method", nullable = false, length = 50)
-    private String paymentMethod;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paymentMethod_id")
+    private PaymentMethodEntity paymentMethod;
 
     // Mã giao dịch của bên thứ 3 (ví dụ transactionId Momo)
     @Column(name = "transaction_code", unique = true)

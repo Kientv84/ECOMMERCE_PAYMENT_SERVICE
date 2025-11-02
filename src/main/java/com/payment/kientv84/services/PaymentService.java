@@ -1,6 +1,6 @@
 package com.payment.kientv84.services;
 
-import com.payment.kientv84.dtos.responses.KafkaOrderResponse;
+import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 
 import java.util.UUID;

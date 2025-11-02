@@ -17,8 +17,8 @@ public class PaymentMethodResponse {
     private String name; // Ví dụ: "Thanh toán khi nhận hàng"
     private String status;
     private String description;
-    private Date createdDate;
-    private Date updatedDate;
-    private String createdBy;
-    private String updatedBy;
+//    private Date createdDate;
+//    private Date updatedDate;
+//    private String createdBy;
+//    private String updatedBy;
 }

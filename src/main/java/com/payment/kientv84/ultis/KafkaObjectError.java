@@ -1,0 +1,16 @@
+package com.payment.kientv84.ultis;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class KafkaObjectError {
+    private String service;
+    private String topic;
+    private String messageError;
+    private KafkaObjectError() {}
+}
+

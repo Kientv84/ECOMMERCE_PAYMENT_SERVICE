@@ -18,7 +18,7 @@ public class PaymentResponse {
     private UUID orderId;
     private UUID userId;
     private String orderCode;
-    private String paymentCode;
+    private PaymentMethodResponse paymentMethod;
     private BigDecimal amount;
     private String status;
     private String transactionRef;

@@ -43,6 +43,9 @@ public class PaymentMethodEntity {
     @Enumerated(EnumType.STRING)
     private PaymentMethodStatus status;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_id")
+    private PaymentEntity paymentId;
     // ====== Metadata ======
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)

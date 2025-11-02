@@ -33,7 +33,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             return responses;
 
         } catch (Exception e) {
-            throw new ServiceException(EnumError.PAYMENT_GET_ERROR, "payment.get.error");
+            throw new ServiceException(EnumError.PAYMENT_METHOD_GET_ERROR, "payment.method.get.error");
         }
     }
 
@@ -42,7 +42,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         try {
             PaymentMethodEntity isExist = paymentMethodRepository.findPaymentMethodByCode(request.getCode());
             if (isExist != null) {
-                throw new ServiceException(EnumError.PAYMENT_DATA_EXISTED, "payment.category.exit");
+                throw new ServiceException(EnumError.PAYMENT_METHOD_DATA_EXISTED, "payment.method.data.exit");
             }
 
             PaymentMethodEntity paymentMethod = PaymentMethodEntity.builder()
@@ -67,7 +67,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public PaymentMethodResponse getPaymentMethodById(UUID id) {
         try {
-            PaymentMethodEntity paymentMethodEntity = paymentMethodRepository.findById(id).orElseThrow(() -> new ServiceException(EnumError.PAYMENT_GET_ERROR, "payment.get.error"));
+            PaymentMethodEntity paymentMethodEntity = paymentMethodRepository.findById(id).orElseThrow(() -> new ServiceException(EnumError.PAYMENT_METHOD_GET_ERROR, "payment.method.get.error"));
 
             return  paymentMethodMapper.mapToPaymentMethodResponse(paymentMethodEntity);
         } catch (ServiceException e) {
@@ -81,7 +81,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public PaymentMethodResponse updatePaymentMethodById(UUID id, PaymentMethodUpdateRequest updateRequest) {
         try {
-            PaymentMethodEntity paymentMethodEntity = paymentMethodRepository.findById(id).orElseThrow(() -> new ServiceException(EnumError.PAYMENT_GET_ERROR, "collection.get.error"));
+            PaymentMethodEntity paymentMethodEntity = paymentMethodRepository.findById(id).orElseThrow(() -> new ServiceException(EnumError.PAYMENT_METHOD_GET_ERROR, "payment.method.get.error"));
 
             if ( updateRequest.getCode() != null) {
                 paymentMethodEntity.setCode(updateRequest.getCode());
@@ -111,7 +111,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public String deletePaymentMethod(List<UUID> ids) {
         try {
             if ( ids == null || ids.isEmpty()) {
-                throw new ServiceException(EnumError.PAYMENT_ERR_DEL_EM, "payment.delete.empty");
+                throw new ServiceException(EnumError.PAYMENT_METHOD_ERR_DEL_EM, "payment.method.delete.empty");
             }
 
             List<PaymentMethodEntity> foundIds = paymentMethodRepository.findAllById(ids);
@@ -119,7 +119,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             System.out.println("Find payment method:" + foundIds.toString());
 
             if ( foundIds.isEmpty()) {
-                throw new ServiceException(EnumError.PAYMENT_ERR_NOT_FOUND, "payment.delete.notfound");
+                throw new ServiceException(EnumError.PAYMENT_METHOD_ERR_NOT_FOUND, "payment.method.delete.notfound");
             }
 
             paymentMethodRepository.deleteAllById(ids);
