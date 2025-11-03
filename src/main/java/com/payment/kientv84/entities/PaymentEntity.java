@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class PaymentEntity{
 
     @Id
@@ -64,14 +66,6 @@ public class PaymentEntity{
     // Ghi chú lỗi hoặc mô tả thêm
     @Column(name = "note")
     private String note;
-
-    // Khi record được tạo
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    // Khi record được cập nhật
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     // ====== Metadata ======
     @CreatedDate

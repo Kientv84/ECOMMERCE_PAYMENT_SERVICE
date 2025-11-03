@@ -1,4 +1,4 @@
-package com.payment.kientv84.messagsing.producer;
+package com.payment.kientv84.messaging.producer;
 
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 import com.payment.kientv84.properties.KafkaTopicProperties;

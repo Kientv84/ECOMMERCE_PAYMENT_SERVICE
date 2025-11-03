@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -21,8 +22,8 @@ public class PaymentResponse {
     private PaymentMethodResponse paymentMethod;
     private BigDecimal amount;
     private String status;
-    private String transactionRef;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private String transactionCode;
+    private Date createdDate;
+    private Date updateDate;
 }
 

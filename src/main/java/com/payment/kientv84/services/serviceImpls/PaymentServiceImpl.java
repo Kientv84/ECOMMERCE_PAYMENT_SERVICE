@@ -7,7 +7,8 @@ import com.payment.kientv84.entities.PaymentEntity;
 import com.payment.kientv84.entities.PaymentMethodEntity;
 import com.payment.kientv84.exceptions.EnumError;
 import com.payment.kientv84.exceptions.ServiceException;
-import com.payment.kientv84.messagsing.producer.PaymentProducer;
+import com.payment.kientv84.mappers.PaymentMapper;
+import com.payment.kientv84.messaging.producer.PaymentProducer;
 import com.payment.kientv84.processors.PaymentProcessor;
 import com.payment.kientv84.processors.PaymentProcessorFactory;
 import com.payment.kientv84.repositories.PaymentMethodRepository;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,7 +32,33 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMethodRepository paymentMethodRepository;
     private final PaymentProcessorFactory paymentProcessorFactory;
     private final PaymentProducer paymentProducer;
+    private final PaymentMapper paymentMapper;
 
+    @Override
+    public List<PaymentResponse> getAllPayment() {
+        try {
+            List<PaymentResponse> responses = paymentRepository.findAll().stream().map(pay -> paymentMapper.mapToPaymentResponse(pay)).toList();
+
+            return responses;
+        } catch (Exception e) {
+            throw new ServiceException(EnumError.PAYMENT_GET_ERROR, "payment.get.error");
+        }
+    }
+
+    @Override
+    public PaymentResponse getPaymentById(UUID id) {
+        try {
+            PaymentEntity payment = paymentRepository.findById(id).orElseThrow(()-> new ServiceException(EnumError.PAYMENT_GET_ERROR, "payment.get.error"));
+
+            return paymentMapper.mapToPaymentResponse(payment);
+
+        } catch ( ServiceException e) {
+            throw e;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     @Transactional

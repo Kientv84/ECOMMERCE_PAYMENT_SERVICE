@@ -3,9 +3,22 @@ package com.payment.kientv84.services;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PaymentService {
+    /**
+     * - Api system
+     */
+
+    List<PaymentResponse> getAllPayment();
+
+    PaymentResponse getPaymentById(UUID id);
+
+    /**
+     * Giao tiếp với Kafka
+     */
+
     /**
      * Xử lý khi nhận được order mới từ Kafka
      * - Lưu PaymentEntity

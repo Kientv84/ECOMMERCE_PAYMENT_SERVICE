@@ -10,6 +10,7 @@ import com.payment.kientv84.processors.PaymentProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class CodProcessor implements PaymentProcessor {
             throw new ServiceException(EnumError.PAYMENT_PROCESS_NOTNULL, "payment.process.notnull");
         }
 
-        payment.setStatus(PaymentStatus.PENDING);
+        payment.setStatus(PaymentStatus.SUCCESS);
         payment.setNote("COD - wait for delivery confirmation");
         // có thể sinh transactionRef nội bộ nếu chưa có
         if (payment.getTransactionCode() == null) {
@@ -34,11 +35,11 @@ public class CodProcessor implements PaymentProcessor {
                 .id(payment.getId())
                 .orderId(payment.getOrderId())
                 .userId(payment.getUserId())
+                .status(payment.getStatus().name())
+                .transactionCode(payment.getTransactionCode())
                 .orderCode(payment.getOrderCode())
                 .paymentMethod(paymentMethodMapper.mapToPaymentMethodResponse(payment.getPaymentMethod())) // tạm tạo mã thanh toán nội bộ
                 .amount(payment.getAmount())
-                .status(payment.getStatus().name())
-                .transactionRef(payment.getTransactionCode())
                 .build();
     }
 }
