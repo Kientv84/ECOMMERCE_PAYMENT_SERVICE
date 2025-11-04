@@ -84,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             paymentRepository.save(payment);
 
-            // Linking processor
+            // Linking processor -- logic with cod, momo, paypal, ...
             PaymentProcessor processor = paymentProcessorFactory.getProcessor(findPaymentMethodFromOrder.getName());
             PaymentResponse response = processor.process(payment);
 
@@ -93,7 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
             paymentRepository.save(payment);
 
             // Produce Kafka event nếu SUCCESS
-            if (PaymentStatus.SUCCESS.name().equalsIgnoreCase(response.getStatus())) {
+            if (PaymentStatus.PAID.name().equalsIgnoreCase(response.getStatus()) || PaymentStatus.COD_PENDING.name().equalsIgnoreCase(response.getStatus())) {
                 log.info("Payment success! Producing Kafka event...");
 
                 //Produce message ...

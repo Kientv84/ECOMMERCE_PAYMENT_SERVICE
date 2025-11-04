@@ -24,7 +24,7 @@ public class CodProcessor implements PaymentProcessor {
             throw new ServiceException(EnumError.PAYMENT_PROCESS_NOTNULL, "payment.process.notnull");
         }
 
-        payment.setStatus(PaymentStatus.SUCCESS);
+        payment.setStatus(PaymentStatus.COD_PENDING);
         payment.setNote("COD - wait for delivery confirmation");
         // có thể sinh transactionRef nội bộ nếu chưa có
         if (payment.getTransactionCode() == null) {
