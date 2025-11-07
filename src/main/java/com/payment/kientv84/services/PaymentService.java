@@ -1,5 +1,6 @@
 package com.payment.kientv84.services;
 
+import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 
@@ -36,7 +37,7 @@ public interface PaymentService {
     /**
      * Cập nhật trạng thái thanh toán (nếu nhận tín hiệu từ gateway hoặc service khác)
      */
-    void updatePaymentStatus(UUID orderId, String status);
+    PaymentResponse updatePaymentStatus(UUID orderId, PaymentUpdateRequest updateRequest);
 
     /**
      * Gửi Kafka event "payment-success" cho các service khác

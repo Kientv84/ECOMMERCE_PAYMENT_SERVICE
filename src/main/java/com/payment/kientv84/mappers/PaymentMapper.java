@@ -9,5 +9,6 @@ import org.mapstruct.Mapping;
 public interface PaymentMapper {
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "updatedDate", target = "updateDate")
+    @Mapping(source = "status", target = "status")
     PaymentResponse mapToPaymentResponse(PaymentEntity payment);
 }

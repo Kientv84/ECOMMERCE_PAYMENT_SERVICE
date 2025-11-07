@@ -1,6 +1,7 @@
 package com.payment.kientv84.services.serviceImpls;
 
 import com.payment.kientv84.commons.PaymentStatus;
+import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 import com.payment.kientv84.entities.PaymentEntity;
@@ -124,7 +125,22 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public void updatePaymentStatus(UUID orderId, String status) {
+    public PaymentResponse updatePaymentStatus(UUID orderId, PaymentUpdateRequest updateRequest) {
+        log.info("Update payment from order service ...");
+        try {
+            PaymentEntity payment = paymentRepository.findByOrderId(orderId).orElseThrow(null);
+
+            if (payment.getStatus() == PaymentStatus.PAID) {
+                log.info("Exited status PAID at payment service...");
+            }
+            payment.setStatus(PaymentStatus.valueOf(updateRequest.getStatus()));
+
+            paymentRepository.save(payment);
+
+            return paymentMapper.mapToPaymentResponse(payment);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
