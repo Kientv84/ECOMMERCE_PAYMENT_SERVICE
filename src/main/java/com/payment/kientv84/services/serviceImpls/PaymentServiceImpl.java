@@ -4,6 +4,7 @@ import com.payment.kientv84.commons.PaymentStatus;
 import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
+import com.payment.kientv84.dtos.responses.kafka.KafkaPaymentUpdated;
 import com.payment.kientv84.entities.PaymentEntity;
 import com.payment.kientv84.entities.PaymentMethodEntity;
 import com.payment.kientv84.exceptions.EnumError;
@@ -151,6 +152,27 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public void sendPaymentSuccessEvent(PaymentResponse paymentResponse) {
+
+    }
+
+    @Override
+    public void updateStatusFromOrderDelivered(KafkaPaymentUpdated kafkaPaymentUpdated) {
+        log.info("Update update Status FromOrder Delivered ...");
+        try {
+            PaymentEntity payment = paymentRepository.findByOrderId(kafkaPaymentUpdated.getId()).orElseThrow(null);
+
+            if (payment.getStatus() == PaymentStatus.PAID) {
+                log.info("Exited status PAID at payment service...");
+            }
+            payment.setStatus(PaymentStatus.PAID);
+
+            log.info("Update payment status to PAID success...");
+
+            paymentRepository.save(payment);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

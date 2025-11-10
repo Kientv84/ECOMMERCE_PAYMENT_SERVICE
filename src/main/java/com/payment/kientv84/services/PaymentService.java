@@ -3,6 +3,7 @@ package com.payment.kientv84.services;
 import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
+import com.payment.kientv84.dtos.responses.kafka.KafkaPaymentUpdated;
 
 import java.util.List;
 import java.util.UUID;
@@ -43,4 +44,6 @@ public interface PaymentService {
      * Gửi Kafka event "payment-success" cho các service khác
      */
     void sendPaymentSuccessEvent(PaymentResponse paymentResponse);
+
+    void updateStatusFromOrderDelivered(KafkaPaymentUpdated kafkaPaymentUpdated);
 }
