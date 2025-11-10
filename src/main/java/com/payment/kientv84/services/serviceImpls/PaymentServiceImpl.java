@@ -90,21 +90,26 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentResponse response = processor.process(payment);
 
             // Cập nhật payment status trong DB (sau khi processor xử lý)
-            payment.setStatus(PaymentStatus.valueOf(response.getStatus()));
+            PaymentStatus newStatus = PaymentStatus.valueOf(response.getStatus());
+            payment.setStatus(newStatus);
             paymentRepository.save(payment);
 
-            // Produce Kafka event nếu SUCCESS
-            if (PaymentStatus.PAID.name().equalsIgnoreCase(response.getStatus()) || PaymentStatus.COD_PENDING.name().equalsIgnoreCase(response.getStatus())) {
-                log.info("Payment success! Producing Kafka event...");
-
-                //Produce message ...
-                paymentProducer.producePaymentEventSuccess(response);
-
-            } else {
-                log.warn("Payment not completed: {}", response.getStatus());
+            switch (newStatus) {
+                case PAID:
+                    log.info("Payment PAID! Producing Kafka success event...");
+                    paymentProducer.producePaymentEventSuccess(paymentMapper.mapToKafkaPaymentResponse(response));
+                    break;
+                case COD_PENDING:
+                    log.info("Payment COD_PENDING! Producing Kafka COD_PENDING event...");
+                    paymentProducer.producePaymentEventCodePending(paymentMapper.mapToKafkaPaymentResponse(response));
+                    break;
+                default:
+                    log.warn("Payment not completed: {}", newStatus);
+                    paymentProducer.producePaymentEventFailed(paymentMapper.mapToKafkaPaymentResponse(response));
+                    break;
             }
 
-            log.info("Payment response! {}", response);
+            log.info("Payment response processed: {}", response);
 
         } catch (ServiceException e) {
             throw e;

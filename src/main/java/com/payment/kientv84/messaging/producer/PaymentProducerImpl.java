@@ -1,6 +1,7 @@
 package com.payment.kientv84.messaging.producer;
 
 import com.payment.kientv84.dtos.responses.PaymentResponse;
+import com.payment.kientv84.dtos.responses.kafka.KafkaPaymentResponse;
 import com.payment.kientv84.properties.KafkaTopicProperties;
 import com.payment.kientv84.services.KafkaService;
 import com.payment.kientv84.ultis.KafkaObjectError;
@@ -16,9 +17,23 @@ public class PaymentProducerImpl implements PaymentProducer{
     private final KafkaService kafkaService;
 
     @Override
-    public void producePaymentEventSuccess(PaymentResponse message) {
-        var topic = kafkaTopicProperties.getPaymentChecked();
-        log.info("[produceOrderEventSuccess] producing order to topic {}", topic);
+    public void producePaymentEventCodePending(KafkaPaymentResponse message) {
+        var topic = kafkaTopicProperties.getPaymentCodPending();
+        log.info("[producePaymentEventCodePending] producing order to topic {}", topic);
+        kafkaService.send(topic, message);
+    }
+
+    @Override
+    public void producePaymentEventFailed(KafkaPaymentResponse message) {
+        var topic = kafkaTopicProperties.getPaymentFailed();
+        log.info("[producePaymentEventFailed] producing order to topic {}", topic);
+        kafkaService.send(topic, message);
+    }
+
+    @Override
+    public void producePaymentEventSuccess(KafkaPaymentResponse message) {
+        var topic = kafkaTopicProperties.getPaymentSuccess();
+        log.info("[producePaymentEventCodePending] producing order to topic {}", topic);
         kafkaService.send(topic, message);
     }
 

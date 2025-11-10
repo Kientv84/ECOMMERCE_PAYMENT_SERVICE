@@ -11,5 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("spring.kafka.payment.topic")
 public class KafkaTopicProperties {
     private String errorPayment;
-    private String paymentChecked;
+    private String paymentCodPending;
+    private String paymentFailed;
+    private String paymentSuccess;
 }

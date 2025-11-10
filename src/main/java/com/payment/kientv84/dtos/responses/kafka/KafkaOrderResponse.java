@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -18,4 +19,5 @@ public class KafkaOrderResponse {
     private UUID paymentMethod;
     private String shippingAddress;
     private BigDecimal totalPrice;
+    private List<KafkaOrderItemResponse> items;
 }
