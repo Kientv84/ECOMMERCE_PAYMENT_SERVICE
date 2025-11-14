@@ -35,10 +35,10 @@ public class PaymentEntity{
     @Column(name = "order_id", nullable = false)
     private UUID orderId;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
 
-    @Column(nullable = false)
+    @Column(name = "order_code", nullable = false)
     private String orderCode;
 
     // Tổng tiền thanh toán (copy từ order để tiện tracking)
