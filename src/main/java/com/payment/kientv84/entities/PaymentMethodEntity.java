@@ -31,37 +31,34 @@ public class PaymentMethodEntity {
     private UUID id;
 
     @Column(name = "code", unique = true, nullable = false, length = 50)
-    private String code; // "COD", "MOMO", "VNPAY", ...
+    private String code;
 
     @Column(name = "name", nullable = false, length = 100)
-    private String name; // Ví dụ: "Thanh toán khi nhận hàng"
+    private String name;
 
     @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "status", nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 30)
     private PaymentMethodStatus status;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_id")
-    private PaymentEntity paymentId;
-    // ====== Metadata ======
+    // === Metadata ===
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name ="create_date")
+    @Column(name = "create_date")
     private Date createdDate;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
-    @Column(name ="update_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_date")
     private Date updatedDate;
 
     @CreatedBy
-    @Column(name ="created_by")
+    @Column(name = "created_by")
     private String createdBy;
 
     @LastModifiedBy
-    @Column(name ="updated_by")
+    @Column(name = "updated_by")
     private String updatedBy;
 }

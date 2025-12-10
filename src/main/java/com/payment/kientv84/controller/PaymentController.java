@@ -1,6 +1,8 @@
 package com.payment.kientv84.controller;
 
 import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
+import com.payment.kientv84.dtos.requests.search.payment.PaymentSearchRequest;
+import com.payment.kientv84.dtos.responses.PagedResponse;
 import com.payment.kientv84.dtos.responses.PaymentMethodResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 import com.payment.kientv84.services.PaymentService;
@@ -17,9 +19,15 @@ import java.util.UUID;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @GetMapping("/payments")
-    public ResponseEntity<List<PaymentResponse>> getAllPayment() {
-        return ResponseEntity.ok(paymentService.getAllPayment());
+    @PostMapping("/payments/filter")
+    public ResponseEntity<PagedResponse<PaymentResponse>> getAllPayment(PaymentSearchRequest request) {
+        return ResponseEntity.ok(paymentService.getAllPayment(request));
+    }
+
+    @GetMapping("/payments/suggestion")
+    public ResponseEntity<List<PaymentResponse>> getPaymentSuggestions(@RequestParam String q,
+                                                                   @RequestParam(defaultValue = "5") int limit) {
+        return ResponseEntity.ok(paymentService.searchPaymentSuggestion(q, limit));
     }
 
     @GetMapping("/payment/{id}")

@@ -1,6 +1,8 @@
 package com.payment.kientv84.services;
 
 import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
+import com.payment.kientv84.dtos.requests.search.payment.PaymentSearchRequest;
+import com.payment.kientv84.dtos.responses.PagedResponse;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 import com.payment.kientv84.dtos.responses.kafka.KafkaPaymentUpdated;
@@ -13,7 +15,9 @@ public interface PaymentService {
      * - Api system
      */
 
-    List<PaymentResponse> getAllPayment();
+    PagedResponse<PaymentResponse> getAllPayment(PaymentSearchRequest request);
+
+    List<PaymentResponse> searchPaymentSuggestion(String q, int limit);
 
     PaymentResponse getPaymentById(UUID id);
 

@@ -46,8 +46,8 @@ public class PaymentEntity{
     private BigDecimal amount;
 
     // Phương thức thanh toán: COD, MOMO, VNPAY, PAYPAL...
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "paymentMethod_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
     private PaymentMethodEntity paymentMethod;
 
     // Mã giao dịch của bên thứ 3 (ví dụ transactionId Momo)

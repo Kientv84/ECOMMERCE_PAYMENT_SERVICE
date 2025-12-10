@@ -52,7 +52,7 @@ INSERT INTO payment_entity (
     user_id,
     order_code,
     amount,
-    paymentMethod_id,
+    payment_method_id,
     status,
     payment_date,
     note,

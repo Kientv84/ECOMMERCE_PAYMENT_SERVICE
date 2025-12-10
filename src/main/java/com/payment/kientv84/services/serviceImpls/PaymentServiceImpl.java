@@ -1,7 +1,13 @@
 package com.payment.kientv84.services.serviceImpls;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.payment.kientv84.commons.Constant;
 import com.payment.kientv84.commons.PaymentStatus;
 import com.payment.kientv84.dtos.requests.PaymentUpdateRequest;
+import com.payment.kientv84.dtos.requests.search.payment.PaymentSearchModel;
+import com.payment.kientv84.dtos.requests.search.payment.PaymentSearchOption;
+import com.payment.kientv84.dtos.requests.search.payment.PaymentSearchRequest;
+import com.payment.kientv84.dtos.responses.PagedResponse;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 import com.payment.kientv84.dtos.responses.kafka.KafkaPaymentUpdated;
@@ -16,10 +22,17 @@ import com.payment.kientv84.processors.PaymentProcessorFactory;
 import com.payment.kientv84.repositories.PaymentMethodRepository;
 import com.payment.kientv84.repositories.PaymentRepository;
 import com.payment.kientv84.services.PaymentService;
+import com.payment.kientv84.services.RedisService;
 import com.payment.kientv84.ultis.KafkaObjectError;
+import com.payment.kientv84.ultis.PageableUtils;
+import com.payment.kientv84.ultis.SpecificationBuilder;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,24 +48,83 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentProcessorFactory paymentProcessorFactory;
     private final PaymentProducer paymentProducer;
     private final PaymentMapper paymentMapper;
+    private final RedisService redisService;
+
 
     @Override
-    public List<PaymentResponse> getAllPayment() {
-        try {
-            List<PaymentResponse> responses = paymentRepository.findAll().stream().map(pay -> paymentMapper.mapToPaymentResponse(pay)).toList();
+    public PagedResponse<PaymentResponse> getAllPayment(PaymentSearchRequest request) {
+        log.info("Get all payment api calling...");
+        String key = "payments:list:" + request.hashKey();
 
-            return responses;
+        try {
+            PagedResponse<PaymentResponse> cached = redisService.getValue(key, new TypeReference<PagedResponse<PaymentResponse>>() {
+            });
+
+            if (cached != null) {
+                log.info("Redis read for key {}", key);
+                return cached;
+            }
+
+            PaymentSearchOption option = request.getPaymentSearchOption();
+            PaymentSearchModel model = request.getPaymentSearchModel();
+
+            List<String> allowedFields = List.of("transactionCode", "createdDate");
+
+            PageRequest pageRequest = PageableUtils.buildPageRequest(
+                    option.getPage(),
+                    option.getSize(),
+                    option.getSort(),
+                    allowedFields,
+                    "createdDate",
+                    Sort.Direction.DESC
+            );
+
+            Specification<PaymentEntity> spec = new SpecificationBuilder<PaymentEntity>()
+                    .equal("status", model.getStatus())
+                    .likeAnyFieldIgnoreCase(model.getQ(), "transactionCode")
+                    .build();
+
+            Page<PaymentResponse> result = paymentRepository.findAll(spec, pageRequest)
+                    .map(paymentMapper::mapToPaymentResponse);
+
+            PagedResponse<PaymentResponse> response = new PagedResponse<>(
+                    result.getNumber(),
+                    result.getSize(),
+                    result.getTotalElements(),
+                    result.getTotalPages(),
+                    result.getContent()
+            );
+
+            redisService.setValue(key, response, Constant.SEARCH_CACHE_TTL);
+
+            log.info("Redis MISS, caching search result for key {}", key);
+
+            return response;
+
         } catch (Exception e) {
+            log.error("Error get all orders", e);
             throw new ServiceException(EnumError.PAYMENT_GET_ERROR, "payment.get.error");
         }
     }
 
     @Override
+    public List<PaymentResponse> searchPaymentSuggestion(String q, int limit) {
+        List<PaymentEntity> payments = paymentRepository.searchPaymentSuggestion(q, limit);
+        return payments.stream().map(pay -> paymentMapper.mapToPaymentResponse(pay)).toList();
+    }
+
+    @Override
     public PaymentResponse getPaymentById(UUID id) {
+        log.info("Calling get by id api with payment {}", id);
+
+        String key = "payment:"+id;
         try {
             PaymentEntity payment = paymentRepository.findById(id).orElseThrow(()-> new ServiceException(EnumError.PAYMENT_GET_ERROR, "payment.get.error"));
 
-            return paymentMapper.mapToPaymentResponse(payment);
+            PaymentResponse response =  paymentMapper.mapToPaymentResponse(payment);
+            redisService.setValue(key,response, Constant.CACHE_TTL );
+
+            return response;
 
         } catch ( ServiceException e) {
             throw e;
@@ -142,6 +214,14 @@ public class PaymentServiceImpl implements PaymentService {
             payment.setStatus(PaymentStatus.valueOf(updateRequest.getStatus()));
 
             paymentRepository.save(payment);
+
+            // Invalidate cache
+            String key = "payment:" + payment.getId();
+            redisService.deleteByKey(key);
+
+            redisService.deleteByKeys("payment:" + payment.getId(), "payments:list:*");
+
+            log.info("Cache invalidated for key {}", key);
 
             return paymentMapper.mapToPaymentResponse(payment);
         } catch (Exception e) {
