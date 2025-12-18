@@ -1,6 +1,8 @@
 package com.payment.kientv84.messaging.consumer;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.payment.kientv84.dtos.responses.kafka.KafkaEvent;
 import com.payment.kientv84.dtos.responses.kafka.KafkaOrderResponse;
 import com.payment.kientv84.dtos.responses.kafka.KafkaPaymentUpdated;
 import com.payment.kientv84.services.PaymentService;
@@ -25,9 +27,17 @@ public class OrderUpdatedPayment {
             log.info("[onMessageHandler] Start consuming message ...");
             log.info("[onMessageHandler] Received message payload: {}", message);
 
-            KafkaPaymentUpdated response = new ObjectMapper().readValue(message, KafkaPaymentUpdated.class);
+            ObjectMapper objectMapper = new ObjectMapper();
 
-            paymentService.updateStatusFromOrderDelivered(response);
+            KafkaEvent<KafkaPaymentUpdated> event =
+                    objectMapper.readValue(
+                            message,
+                            new TypeReference<KafkaEvent<KafkaPaymentUpdated>>() {}
+                    );
+
+            KafkaPaymentUpdated payload = event.getPayload();
+
+            paymentService.updateStatusFromOrderDelivered(payload);
             log.info("[onMessageHandler] Process payment success ...");
         } catch (Exception e) {
             log.error("[onMessageHandler] Error while Process payment . Err {}", e.getMessage());
