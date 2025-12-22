@@ -1,5 +1,6 @@
 package com.payment.kientv84.messaging.producer;
 
+import com.payment.kientv84.commons.EventType;
 import com.payment.kientv84.dtos.responses.PaymentResponse;
 import com.payment.kientv84.dtos.responses.kafka.EventMetadata;
 import com.payment.kientv84.dtos.responses.kafka.KafkaEvent;
@@ -29,7 +30,7 @@ public class PaymentProducerImpl implements PaymentProducer{
         KafkaEvent<KafkaPaymentResponse> message = KafkaEvent.<KafkaPaymentResponse>builder()
                 .metadata(EventMetadata.builder()
                         .eventId(UUID.randomUUID())
-                        .eventType(topic)
+                        .eventType(EventType.PAYMENT_COD_PENDING.name())
                         .source("payment-service")
                         .version(1)
                         .build())
@@ -46,7 +47,7 @@ public class PaymentProducerImpl implements PaymentProducer{
         KafkaEvent<KafkaPaymentResponse> message = KafkaEvent.<KafkaPaymentResponse>builder()
                 .metadata(EventMetadata.builder()
                         .eventId(UUID.randomUUID())
-                        .eventType(topic)
+                        .eventType(EventType.PAYMENT_FAILED.name())
                         .source("payment-service")
                         .version(1)
                         .build())
@@ -64,7 +65,7 @@ public class PaymentProducerImpl implements PaymentProducer{
         KafkaEvent<KafkaPaymentResponse> message = KafkaEvent.<KafkaPaymentResponse>builder()
                 .metadata(EventMetadata.builder()
                         .eventId(UUID.randomUUID())
-                        .eventType(topic)
+                        .eventType(EventType.PAYMENT_SUCCESS.name())
                         .source("payment-service")
                         .version(1)
                         .build())
